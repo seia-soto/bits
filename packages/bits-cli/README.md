@@ -7,7 +7,7 @@
 ## Usage
 
 ```sh
-pnpm start -c <mapping> -b <data> [-i, --inflate] [-d, --deflate]
+pnpm start -c <mapping> -b <data> [-i, --inflate] [-d, --deflate] [-e, --bigint]
 
 # Deflate seq of numbers
 pnpm start -c <mapping> -b 1,2,3,4 -d

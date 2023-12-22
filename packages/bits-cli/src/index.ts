@@ -33,6 +33,10 @@ const {values} = parseArgs({
 			type: 'boolean',
 			short: 'd',
 		},
+		bigint: {
+			type: 'boolean',
+			short: 'e',
+		},
 		config: {
 			type: 'string',
 			short: 'c',
@@ -77,6 +81,45 @@ if (mappings instanceof Error) {
 }
 
 const fieldNames = mappings.map(mapping => mapping[0]);
+
+// Handle bigint
+if (values.bigint) {
+	console.warn('(Experimental) Enabled bigint support!');
+
+	const fieldSizesBigInt = mappings.map(mapping => BigInt(mapping[1]));
+
+	if (values.inflate) {
+		const bin = failSafe(() => BigInt(values.bin!));
+
+		if (bin instanceof Error) {
+			console.error('The given data is not valid bigint (radix of 10)!');
+			process.exit(1);
+		}
+
+		const fieldValues = bits.inflateBigInt(fieldSizesBigInt, bin);
+
+		for (let i = 0; i < fieldNames.length; i++) {
+			console.log(`${fieldNames[i] ?? '(unknown)'}: ${fieldValues[i]}`);
+		}
+	} else {
+		const bins = values.bin.split(',').map(_bin => {
+			const bin = failSafe(() => BigInt(_bin));
+
+			if (bin instanceof Error) {
+				console.error('The given data is not valid bigint (radix of 10)!');
+				process.exit(1);
+			}
+
+			return bin;
+		});
+		const bin = bits.deflateBigInt(fieldSizesBigInt, bins);
+
+		console.log(bin.toString());
+	}
+
+	process.exit(0);
+}
+
 const fieldSizes = mappings.map(mapping => mapping[1]);
 
 if (values.inflate) {
