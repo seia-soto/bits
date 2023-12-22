@@ -17,7 +17,7 @@ export const deflate = (fields: number[], values: number[]) => {
 	let bits = 0;
 
 	for (let i = 0; i < len; i++) {
-		const maxValue = (fields[i] ** 2) - 1;
+		const maxValue = (2 ** fields[i]) - 1;
 
 		if (values[i] > maxValue) {
 			throw new Error(`Exceeded maximum expressible number in slot! max=${maxValue} value=${values[i]}`);
